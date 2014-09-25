@@ -13,13 +13,13 @@
 
 (defn- create-media-file [type media-storage-dir]
   (let [timestamp (.format (new SimpleDateFormat "yyyyMMdd_HHmmss") (new Date))]
-    (case type
+    (condp = type
       media-type-image (new File (str (.getPath media-storage-dir)
-                                              File/separator
-                                              "IMG_" timestamp ".jpg"))
+                                      File/separator
+                                      "IMG_" timestamp ".jpg"))
       media-type-video (new File (str (.getPath media-storage-dir)
-                                              File/separator
-                                              "VID_" timestamp ".mp4"))
+                                      File/separator
+                                      "VID_" timestamp ".mp4"))
       nil ) ) )
 
 (defn- get-output-media-file [type]
