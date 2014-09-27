@@ -4,10 +4,16 @@
         [neko.ui :only [make-ui]])
   (:require [com.dankee.camera_spike.saving-media :refer [get-output-image-uri]])
   (:import [android.app Activity]
+           [android.graphics BitmapFactory]
            [android.provider MediaStore]
+           [android.util Log]
            [android.widget Toast]) )
 
 (def capture-image-activity-request-code 100)
+
+(defn debug-tap [label object]
+  (Log/d "Camera Spike" (str label ": " object))
+  object )
 
 (defn show-toast [activity text]
   (.show (Toast/makeText activity text Toast/LENGTH_LONG)) )
@@ -32,7 +38,13 @@
 
       (if (= request-code capture-image-activity-request-code)
         (condp = result-code
-          Activity/RESULT_OK       (show-toast activity (str "Image saved to:\n" (.toString @file-uri)))
+
+          Activity/RESULT_OK
+          (let [bitmap (BitmapFactory/decodeFile (.getPath @file-uri))
+                width (.getWidth bitmap)
+                height (.getHeight bitmap) ]
+            (show-toast activity (str width " x " height " image saved.")) )
+
           Activity/RESULT_CANCELED (show-toast activity "Cancelled :-(")
           (show-toast activity "Failure! >:-(") ) ) ) ) )
 
